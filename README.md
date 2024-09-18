@@ -20,7 +20,7 @@ Method `is_valid()` berfungsi untuk memvalidasi data yang dimasukkan dalam input
 
 1. Membuat class baru yang meng-inherit class `ModelForm`, yaitu jenis form khusus pada Django yang menghubungkan form dengan model.
 
-   ```
+   ```python
    from django.forms import ModelForm
    from .models import Product
 
@@ -32,7 +32,7 @@ Method `is_valid()` berfungsi untuk memvalidasi data yang dimasukkan dalam input
 
 2. Membuat instance dari class `ProductForm` pada views, lalu mengirim instance dari form tersebut ke template.
 
-   ```
+   ```python
    def create_product(request):
      if request.method == 'POST':
        form = ProductForm(request.POST)
@@ -47,7 +47,7 @@ Method `is_valid()` berfungsi untuk memvalidasi data yang dimasukkan dalam input
 
 3. Menampilkan form pada template seperti berikut.
 
-   ```
+   ```django
    {% extends "base.html" %} {% block content %}
    <form method="post">
      {% csrf_token %}
@@ -66,7 +66,7 @@ Method `is_valid()` berfungsi untuk memvalidasi data yang dimasukkan dalam input
 
 4. Membuat 4 fungsi berikut pada views dimana keempat fungsi tersebut mengambil data dari model, lalu mengembalikannya dengan format yang sesuai menggunakan serializers.
 
-   ```
+   ```python
    def show_xml(request):
      data = Product.objects.all()
      return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
@@ -85,7 +85,7 @@ Method `is_valid()` berfungsi untuk memvalidasi data yang dimasukkan dalam input
    ```
 
 5. Menambahkan baris berikut pada list `urlpatterns` pada `urls.py` aplikasi `main` untuk melakukan routing.
-   ```
+   ```python
    path('xml/', show_xml, name='show_xml'),
    path('json/', show_json, name='show_json'),
    path('xml/<str:id>/', show_xml_by_id, name='show_xml_by_id'),
