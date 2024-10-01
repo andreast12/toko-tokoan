@@ -1,5 +1,143 @@
 Link aplikasi: http://andreas-timothy-tokotokoan.pbp.cs.ui.ac.id/
 
+# Tugas 5
+
+## Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!
+
+Urutan prioritas pengambilan CSS selector dilakukan berdasarkan spesifisitas yang dihitung dengan cara berikut.
+
+- Elemen tag/selector tipe (p, div, h1, dll.): Memiliki spesifisitas paling rendah.
+- Class selector, pseudo-class (.class-name, :hover, :focus, dll.): Spesifisitas sedang.
+- ID selector (#id-name): Spesifisitas lebih tinggi.
+- Inline style (style yang langsung diberikan di atribut elemen HTML): Spesifisitas tertinggi.
+- Aturan !important: Aturan !important akan mengalahkan semua selektor lain, tanpa memperhatikan spesifisitas.
+
+Spesifisitas dihitung menggunakan format angka berbentuk (a, b, c, d), di mana:
+
+- a = 1 jika ada aturan !important, jika tidak a = 0.
+- b = jumlah ID selector.
+- c = jumlah class selector, pseudo-class (:hover, :active, dll.), atau attribute selector ([type="text"], dll.).
+- d = jumlah tag selector atau pseudo-element (::before, ::after, dll.).
+
+Semakin tinggi nilai (a, b, c, d), semakin besar spesifisitasnya. Jika dua selector memiliki spesifisitas yang sama, browser akan menggunakan aturan cascade, yaitu memilih aturan yang ditulis terakhir.
+
+## Mengapa responsive design menjadi konsep yang penting dalam pengembangan aplikasi web? Berikan contoh aplikasi yang sudah dan belum menerapkan responsive design!
+
+Responsive design penting dalam pengembangan aplikasi web untuk meningkatkan aksesibilitas dan pengalaman pengguna. Dengan responsive design, sebuah aplikasi web akan menjadi lebih aksesibel dan nyaman digunakan di berbagai perangkat dan ukuran layar. Contoh aplikasi yang sudah menerapkan responsive design adalah [YouTube](http://www.youtube.com/), sedangkan contoh yang belum menerapkan responsive design adalah [Arngren.net](http://www.arngren.net/).
+
+## Jelaskan perbedaan antara margin, border, dan padding, serta cara untuk mengimplementasikan ketiga hal tersebut!
+
+- Margin adalah ruang kosong di luar batas elemen (border). Ini digunakan untuk memberi jarak antara elemen yang satu dengan elemen lainnya. Ada 3 cara menggunakan margin:
+  1. Margin individual
+     ```css
+     div {
+       margin-top: 20px;
+       margin-right: 15px;
+       margin-bottom: 20px;
+       margin-left: 15px;
+     }
+     ```
+  2. Margin shorthand (urutannya: top, right, bottom, left)
+     ```css
+     div {
+       margin: 20px 15px 20px 15px;
+     }
+     ```
+  3. Margin seragam (semua sisi sama)
+     ```css
+     div {
+       margin: 10px;
+     }
+     ```
+- Border adalah garis atau bingkai yang berada di antara margin dan padding. Border mengelilingi konten dan padding elemen, serta bisa diatur tampilannya (warna, ketebalan, gaya). Ada 2 cara menggunakan border:
+  1. Border individual
+     ```css
+     div {
+       border-top: 2px solid red;
+       border-right: 1px dashed blue;
+       border-bottom: 3px dotted green;
+       border-left: 4px solid black;
+     }
+     ```
+  2. Border shorthand
+     ```css
+     div {
+       border: 2px solid black;
+     }
+     ```
+- Padding adalah ruang kosong di dalam border elemen yang memisahkan konten dari batas elemen (border). Padding berada di antara konten dan border elemen. Ada 3 cara menggunakan padding:
+  1. Padding individual
+     ```css
+     div {
+       padding-top: 20px;
+       padding-right: 15px;
+       padding-bottom: 20px;
+       padding-left: 15px;
+     }
+     ```
+  2. Padding shorthand (urutannya: top, right, bottom, left)
+     ```css
+     div {
+       padding: 20px 15px 20px 15px;
+     }
+     ```
+  3. Padding seragam (semua sisi sama)
+     ```css
+     div {
+       padding: 10px;
+     }
+     ```
+
+## Jelaskan konsep flex box dan grid layout beserta kegunaannya!
+
+Flexbox adalah model layout one-dimensional yang dirancang untuk mengatur elemen di satu arah, yaitu horizontal (baris) atau vertikal (kolom). Flexbox memungkinkan elemen-elemen untuk menyesuaikan ukuran dan letaknya berdasarkan ruang yang tersedia dalam container untuk membuat tata letak yang fleksibel dan responsif.
+
+Grid Layout adalah model layout two-dimensional yang lebih canggih daripada Flexbox. Grid memungkinkan kita untuk menyusun elemen dalam baris dan kolom secara bersamaan sehingga memungkinkan tata letak yang lebih kompleks seperti layout majalah, dashboard, atau halaman e-commerce.
+
+## Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial)!
+
+1. Untuk menghapus dan mengedit product, tambahkan 2 fungsi berikut pada views.
+
+   ```python
+   def edit_product(request, id):
+     product = Product.objects.get(pk = id)
+
+     form = ProductForm(request.POST or None, instance=product)
+
+     if form.is_valid() and request.method == "POST":
+         form.save()
+         return HttpResponseRedirect(reverse('main:show_main'))
+
+     context = {'form': form}
+     return render(request, "edit_product.html", context)
+
+   def delete_product(request, id):
+     product = Product.objects.get(pk = id)
+     product.delete()
+     return HttpResponseRedirect(reverse('main:show_main'))
+   ```
+
+   Kedua fungsi tersebut akan menghandle logic dalam menghapus dan mengedit product. Kita juga perlu membuat routing untuk kedua fungsi tersebut dengan menambahkan baris berikut pada `urls.py`.
+
+   ```python
+   path('edit-product/<uuid:id>', edit_product, name='edit_product'),
+   path('delete/<uuid:id>', delete_product, name='delete_product')
+   ```
+
+   Lalu, kita perlu menambahkan button pada html template untuk mengedit dan menghapus product. Untuk mengedit, kita juga memerlukan sebuah form yang berisi data product yang akan diedit.
+
+2. Untuk mengkustomisasi halaman agar lebih menarik dan responsive, kita dapat menggunakan tailwindcss dengan cara menambahkan baris berikut di dalam tag `head` pada `base.html`.
+
+   ```html
+   <script src="https://cdn.tailwindcss.com"></script>
+   ```
+
+   Setelah itu, kita tinggal menambahkan class-class tailwind di setiap elemen html yang ingin kita kustomisasi sesuai keinginan.
+
+3. Untuk membuat tombol edit dan hapus pada card product, kita dapat menggunakan svg untuk menampilkan icon dan membungkus svg tersebut ke dalam tag `a` untuk mengarahkan ke url yang sesuai.
+
+4. Untuk membuat navbar yang responsive, kita dapat memanfaatkan breakpoints pada tailwind untuk menampilkan seluruh item pada navbar jika lebar layar melebihi ukuran tertentu. Tetapi jika lebar layar kurang dari ukuran tersebut, seluruh item tadi akan disembunyikan dan hanya menampilkan mobile menu. Lalu kita dapat menggunakan javascript untuk menampilkan dan menyembunyikan item pada navbar ketika mobile menu diklik.
+
 # Tugas 4
 
 ## Apa perbedaan antara `HttpResponseRedirect()` dan `redirect()`

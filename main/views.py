@@ -15,8 +15,9 @@ def show_main(request):
   products = Product.objects.filter(user=request.user)
   context = {
     'nama_app': 'toko-tokoan',
-    'nama': request.user.username,
-    'kelas': 'PBP E',
+    'npm': 2306259963,
+    'name': request.user.username,
+    'class': 'PBP E',
     'products': products,
     'last_login': request.COOKIES['last_login'],
   }
@@ -85,3 +86,20 @@ def logout_user(request):
   response = HttpResponseRedirect(reverse('main:login'))
   response.delete_cookie('last_login')
   return response
+
+def edit_product(request, id):
+    product = Product.objects.get(pk = id)
+
+    form = ProductForm(request.POST or None, instance=product)
+
+    if form.is_valid() and request.method == "POST":
+        form.save()
+        return HttpResponseRedirect(reverse('main:show_main'))
+
+    context = {'form': form}
+    return render(request, "edit_product.html", context)
+
+def delete_product(request, id):
+    product = Product.objects.get(pk = id)
+    product.delete()
+    return HttpResponseRedirect(reverse('main:show_main'))
