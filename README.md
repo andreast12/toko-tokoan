@@ -1,5 +1,60 @@
 Link aplikasi: http://andreas-timothy-tokotokoan.pbp.cs.ui.ac.id/
 
+# Tugas 6
+
+## Jelaskan manfaat dari penggunaan JavaScript dalam pengembangan aplikasi web!
+
+Penggunaan JavaScript dalam pengembangan aplikasi web bermanfaat dalam menambah interaktivitas dan dinamisme pada halaman web, seperti animasi, validasi form, event handling, manipulasi DOM, asynchronous programming, dll.
+
+## Jelaskan fungsi dari penggunaan `await` ketika kita menggunakan `fetch()`! Apa yang akan terjadi jika kita tidak menggunakan `await`?
+
+`await` digunakan untuk menunggu hasil dari promise yang dihasilkan oleh `fetch()` sebelum melanjutkan eksekusi kode berikutnya. Jika kita tidak menggunakan `await`, `fetch()` akan menghasilkan data yang tidak sesuai.
+
+## Mengapa kita perlu menggunakan decorator `csrf_exempt` pada view yang akan digunakan untuk AJAX `POST`?
+
+Karena jika menggunakan AJAX untuk mengirim `POST` request, CSRF token tidak akan disertakan secara otomatis karena AJAX request dilakukan di latar belakang dan tidak secara otomatis dihubungkan dengan mekanisme CSRF form. Jika CSRF token tidak disertakan dalam permintaan POST melalui AJAX, Django akan menolak request tersebut dengan mengembalikan 403 Forbidden error sebagai respon karena sistem keamanan CSRF mendeteksi bahwa tidak ada token valid yang diterima. Oleh karena itu, kita perlu menggunakan decorator `csrf_exempt` agar Django mengabaikan keberadaan CSRF token.
+
+## Pada tutorial PBP minggu ini, pembersihan data input pengguna dilakukan di belakang (backend) juga. Mengapa hal tersebut tidak dilakukan di frontend saja?
+
+Pembersihan data input perlu dilakukan di backend untuk melindungi database dari data input yang berbahaya. Hal ini tidak cukup dilakukan di frontend saja karena pengguna/penyerang dapat menggunakan tools seperti postman untuk membuat request ke backend secara langsung tanpa melalui frontend.
+
+## Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial)!
+
+1. Menambahkan fungsi `refreshProducts()` pada `main.html` untuk melakukan `GET` request menggunakan AJAX.
+2. Menambahkan modal dan fungsi `addProduct()` pada `main.html` untuk melakukan `POST` request menggunakan AJAX.
+3. Menambahkan fungsi berikut pada `views.py` untuk menambah product ke database.
+
+   ```python
+   @csrf_exempt
+   @require_POST
+   def add_product_ajax(request):
+     name = strip_tags(request.POST.get("name"))
+     price = request.POST.get("price")
+     description = strip_tags(request.POST.get("description"))
+     user = request.user
+
+     new_product = Product(
+         name=name, price=price,
+         description=description,
+         user=user
+     )
+     new_product.save()
+
+     return HttpResponse(b"CREATED", status=201)
+   ```
+
+4. Menambahkan baris berikut pada `urls.py` untuk mengarahkan path `create-ajax/` ke fungsi view yang baru dibuat.
+   ```python
+   path('create-ajax/', add_product_ajax, name='add_product_ajax')
+   ```
+5. Menambahkan baris berikut di dalam tag `<script>` pada `main.html` untuk menghubungkan form pada modal ke path `create-ajax/`.
+   ```javascript
+   document.getElementById("productForm").addEventListener("submit", (e) => {
+     e.preventDefault();
+     addProduct();
+   });
+   ```
+
 # Tugas 5
 
 ## Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!
